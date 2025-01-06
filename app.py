@@ -1,6 +1,6 @@
 import streamlit as st
-import nltk
-nltk.download('punkt')
+# import nltk
+# nltk.download('punkt')
 from src.components import (
     dashboard,
     maps,
