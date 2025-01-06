@@ -1,7 +1,6 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-from textblob import TextBlob
 import requests
 import json
 from datetime import datetime
@@ -326,13 +325,43 @@ class CommunicationDashboard:
         st.session_state['avg_satisfaction'] = avg_satisfaction
         st.session_state['sentiment_trend'] = sentiment_trend
 
-    @staticmethod
-    def analyze_sentiment(text):
-        """Analyse le sentiment d'un texte"""
-        if not text:
-            return 0
-        analysis = TextBlob(text)
-        return analysis.sentiment.polarity
+@staticmethod
+def analyze_sentiment(text):
+    """Analyse le sentiment d'un texte de manière simple"""
+    if not text:
+        return 0
+        
+    # Dictionnaires de mots positifs et négatifs
+    positive_words = [
+        'bon', 'excellent', 'super', 'génial', 'parfait', 'satisfait',
+        'merci', 'bravo', 'propre', 'efficace', 'pratique', 'bien',
+        'amélioration', 'progrès', 'facile', 'utile'
+    ]
+    
+    negative_words = [
+        'mauvais', 'horrible', 'terrible', 'nul', 'pire', 'insatisfait',
+        'sale', 'inefficace', 'difficile', 'problème', 'compliqué',
+        'confusion', 'déçu', 'lent', 'inutile'
+    ]
+    
+    # Analyse simple
+    text = text.lower()
+    words = text.split()
+    
+    # Calcul du score
+    score = 0
+    word_count = len(words)
+    
+    for word in words:
+        if word in positive_words:
+            score += 1
+        elif word in negative_words:
+            score -= 1
+    
+    # Normalisation entre -1 et 1
+    if word_count > 0:
+        return score / word_count
+    return 0
 
     @staticmethod
     def generate_image(prompt):
