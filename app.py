@@ -1,6 +1,4 @@
 import streamlit as st
-# import nltk
-# nltk.download('punkt')
 from src.components import (
     dashboard,
     maps,
@@ -10,10 +8,6 @@ from src.components import (
     quartiers
 )
 from src.components.communication import CommunicationDashboard
-from src.components.content_manager import ContentManager
-from src.components.campaign_manager import CampaignManager
-from src.components.performance_analyzer import PerformanceAnalyzer
-from src.integrations.social_media_manager import SocialMediaManager
 from src.utils.config import APP_CONFIG
 
 def main():
@@ -56,33 +50,14 @@ def main():
                 maps.show_maps()
                 
         elif sub_menu == "Actions":
-            if st.sidebar.selectbox("Actions", ["Communication"]) == "Communication":
-                comm_sub_menu = st.sidebar.selectbox(
-                    "Options Communication",
-                    [
-                        "Vue d'ensemble",
-                        "Gestion des Campagnes", 
-                        "Gestion de Contenu",
-                        "Réseaux Sociaux",
-                        "Analyses de Performance"
-                    ]
-                )
+            action_menu = st.sidebar.selectbox(
+                "Actions",
+                ["Communication"]
+            )
 
-                if comm_sub_menu == "Vue d'ensemble":
-                    comm_dashboard = CommunicationDashboard()
-                    comm_dashboard.show_communication()
-                elif comm_sub_menu == "Gestion des Campagnes":
-                    campaign_mgr = CampaignManager()
-                    campaign_mgr.show_campaign_dashboard()
-                elif comm_sub_menu == "Gestion de Contenu":
-                    content_mgr = ContentManager()
-                    content_mgr.show_content_dashboard()
-                elif comm_sub_menu == "Réseaux Sociaux":
-                    social_mgr = SocialMediaManager()
-                    social_mgr.show_social_media_dashboard()
-                elif comm_sub_menu == "Analyses de Performance":
-                    perf_analyzer = PerformanceAnalyzer()
-                    perf_analyzer.show_performance_dashboard()
+            if action_menu == "Communication":
+                communication_dashboard = CommunicationDashboard()
+                communication_dashboard.show_communication()
 
     elif main_menu == "Documentation":
         doc_menu = st.sidebar.selectbox(
