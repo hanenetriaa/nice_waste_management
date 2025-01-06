@@ -1,378 +1,224 @@
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import requests
 import json
+import os
 from datetime import datetime
-from src.data.communication_data import get_key_audiences
-from src.data.communication_examples import (
-    COMMUNICATION_EXAMPLES, 
-    GENERIC_STATS, 
-    SEASONAL_MESSAGES
-)
 
 class CommunicationDashboard:
-    def __init__(self):
-        self.feedback_data = []
-        
-    def show_communication(self):
-        st.title("Plan de Communication - Gestion des Déchets Nice")
-        
-        tabs = st.tabs([
-            "Vue d'ensemble", 
-            "Communication par Public", 
-            "Analyses & Rapports",
-            "Génération de Contenu"
-        ])
-        
-        with tabs[0]:
-            self.show_overview()
-        with tabs[1]:
-            self.show_audience_communication()
-        with tabs[2]:
-            self.show_analysis()
-        with tabs[3]:
-            self.show_content_generator()
+   def __init__(self):
+       self.feedback_data = []
+       self._initialize_data()
+       # Définir le chemin du dossier de stockage
+       self.storage_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'generated_content')
+       os.makedirs(self.storage_path, exist_ok=True)
+       os.makedirs(os.path.join(self.storage_path, 'campaigns'), exist_ok=True)
+       os.makedirs(os.path.join(self.storage_path, 'content'), exist_ok=True)
+       os.makedirs(os.path.join(self.storage_path, 'feedback'), exist_ok=True)
 
-    def show_overview(self):
-        st.header("Vue d'ensemble de la Communication")
-        
-        # KPIs principaux
-        cols = st.columns(4)
-        with cols[0]:
-            st.metric("Taux d'Engagement", "24%", "+2.3%", help="Mesure de l'interaction avec nos communications")
-        with cols[1]:
-            st.metric("Taux de Réponse", "89%", "+5%", help="Pourcentage de réponses aux communications")
-        with cols[2]:
-            st.metric("Portée", "45K", "+1.2K", help="Nombre de personnes touchées")
-        with cols[3]:
-            st.metric("Score de Satisfaction", "4.2/5", "+0.3", help="Évaluation moyenne des retours")
+   def _initialize_data(self):
+       self.communication_stats = {
+           "Engagement": {"value": "24%", "delta": "+2.3%"},
+           "Réponses": {"value": "89%", "delta": "+5%"},
+           "Portée": {"value": "45K", "delta": "+1.2K"},
+           "Satisfaction": {"value": "4.2/5", "delta": "+0.3"}
+       }
 
-        # Graphique d'engagement
-        st.subheader("Engagement par Canal")
-        engagement_data = pd.DataFrame({
-            'Date': pd.date_range(start='2024-01-01', periods=12, freq='M'),
-            'Réseaux Sociaux': [45, 48, 52, 55, 58, 62, 65, 68, 70, 72, 75, 78],
-            'Application': [30, 32, 35, 38, 40, 42, 45, 48, 50, 52, 55, 58],
-            'Site Web': [20, 22, 25, 28, 30, 32, 35, 38, 40, 42, 45, 48]
-        })
-        
-        fig = px.line(
-            engagement_data.melt(
-                id_vars=['Date'], 
-                var_name='Canal', 
-                value_name='Engagement'
-            ),
-            x='Date',
-            y='Engagement',
-            color='Canal',
-            title="Évolution de l'Engagement par Canal"  # Utilisez des guillemets doubles pour le titre
-        )
-        fig.update_layout(
-            xaxis_title="Date",
-            yaxis_title="Taux d'Engagement (%)",
-            hovermode='x unified'
-        )
-        st.plotly_chart(fig, use_container_width=True)
+   def show_communication(self):
+       st.header("Communication et Médias")
+       
+       tab1, tab2, tab3, tab4 = st.tabs([
+           "Vue d'ensemble",
+           "Campagnes",
+           "Contenu",
+           "Feedback"
+       ])
+       
+       with tab1:
+           self._show_overview()
+       with tab2:
+           self._show_campaigns()
+       with tab3:
+           self._show_content_management()
+       with tab4:
+           self._show_feedback()
 
-    def show_audience_communication(self):
-        st.header("Communication par Public Cible")
-        
-        # Sélection du public
-        audiences = get_key_audiences()
-        selected_audience = st.selectbox(
-            "Sélectionnez un public cible",
-            list(audiences.keys())
-        )
+   def _show_overview(self):
+       st.subheader("Statistiques Générales")
+       
+       cols = st.columns(4)
+       for i, (metric, data) in enumerate(self.communication_stats.items()):
+           with cols[i]:
+               st.metric(label=metric, value=data["value"], delta=data["delta"])
 
-        if selected_audience in COMMUNICATION_EXAMPLES:
-            examples = COMMUNICATION_EXAMPLES[selected_audience]["Examples"]
-            
-            # Affichage des exemples de communication
-            for example in examples:
-                with st.expander(f"{example['type']} - {example['title']}"):
-                    st.markdown(example['content'])
-                    
-                    # Métriques de performance
-                    cols = st.columns(3)
-                    with cols[0]:
-                        st.metric(
-                            "Engagement",
-                            "24%",
-                            "+2.3%",
-                            help="Taux d'interaction avec ce contenu"
-                        )
-                    with cols[1]:
-                        st.metric(
-                            "Portée",
-                            "1.2K",
-                            "+300",
-                            help="Nombre de personnes touchées"
-                        )
-                    with cols[2]:
-                        st.metric(
-                            "Conversion",
-                            "3.5%",
-                            "+0.5%",
-                            help="Taux de conversion des actions souhaitées"
-                        )
-                    
-                    # Génération d'image si prompt existe
-                    if 'image_prompt' in example:
-                        with st.spinner("Génération de l'image..."):
-                            image_url = self.generate_image(example['image_prompt'])
-                            st.image(image_url, caption=example['title'])
+       engagement_data = pd.DataFrame({
+           'Date': pd.date_range('2024-01-01', periods=12, freq='M'),
+           'Facebook': [45, 48, 52, 55, 58, 62, 65, 68, 70, 72, 75, 78],
+           'Instagram': [30, 32, 35, 38, 40, 42, 45, 48, 50, 52, 55, 58],
+           'Application': [20, 22, 25, 28, 30, 32, 35, 38, 40, 42, 45, 48]
+       })
 
-    def show_content_generator(self):
-        st.header("Générateur de Contenu")
-        
-        # Interface de génération
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            content_type = st.selectbox(
-                "Type de contenu",
-                ["Post Social Media", "Email Newsletter", "Communiqué de Presse"]
-            )
-        
-        with col2:
-            target_audience = st.selectbox(
-                "Public cible",
-                ["Citoyens", "Touristes", "Professionnels"]
-            )
-        
-        with col3:
-            tone = st.select_slider(
-                "Ton de la communication",
-                options=["Formel", "Neutre", "Décontracté"]
-            )
+       fig = px.line(
+           engagement_data.melt(id_vars=['Date'], var_name='Canal', value_name='Engagement'),
+           x='Date', y='Engagement', color='Canal',
+           title="Engagement par Canal de Communication"
+       )
+       st.plotly_chart(fig, use_container_width=True)
 
-        # Options supplémentaires selon le type de contenu
-        if content_type == "Post Social Media":
-            platform = st.selectbox(
-                "Plateforme",
-                ["Facebook", "Instagram", "Twitter", "LinkedIn"]
-            )
-            include_hashtags = st.checkbox("Inclure des hashtags", value=True)
-            
-        elif content_type == "Email Newsletter":
-            include_images = st.checkbox("Inclure des visuels", value=True)
-            include_cta = st.checkbox("Inclure un appel à l'action", value=True)
-            
-        elif content_type == "Communiqué de Presse":
-            include_quotes = st.checkbox("Inclure des citations", value=True)
-            include_stats = st.checkbox("Inclure des statistiques", value=True)
+   def _show_campaigns(self):
+       st.subheader("Gestion des Campagnes")
+       
+       with st.expander("Nouvelle Campagne"):
+           col1, col2 = st.columns(2)
+           with col1:
+               campaign_name = st.text_input("Nom de la campagne")
+               target_audience = st.multiselect("Public cible", ["Résidents", "Touristes", "Commerçants"])
+           with col2:
+               start_date = st.date_input("Date de début")
+               end_date = st.date_input("Date de fin")
+               description = st.text_area("Description", height=100)
+           
+           if st.button("Créer la campagne"):
+               campaign_data = {
+                   "nom": campaign_name,
+                   "public_cible": target_audience,
+                   "debut": start_date.strftime("%Y-%m-%d"),
+                   "fin": end_date.strftime("%Y-%m-%d"),
+                   "description": description,
+                   "status": "En cours",
+                   "creation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+               }
+               self._save_campaign(campaign_data)
+               st.success("Campagne créée avec succès!")
 
-        # Bouton de génération
-        if st.button("Générer le contenu", type="primary"):
-            with st.spinner('Génération en cours...'):
-                content = self.generate_content(
-                    content_type, 
-                    target_audience, 
-                    tone,
-                    locals()
-                )
-                
-                # Affichage du contenu généré
-                st.markdown("### Contenu Généré")
-                st.markdown("---")
-                st.markdown(f"""```{content}```""")
-                
-                # Options post-génération
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("📋 Copier le contenu"):
-                        st.code(content)
-                        st.success("Contenu copié!")
-                
-                with col2:
-                    if st.button("🖼️ Générer une image"):
-                        image_prompt = f"Marketing image about waste management in Nice, {target_audience} focused, {tone.lower()} style"
-                        st.image(self.generate_image(image_prompt))
+       # Afficher les campagnes existantes
+       st.subheader("Campagnes existantes")
+       campaigns = self._load_campaigns()
+       if campaigns:
+           for campaign in campaigns:
+               with st.expander(f"{campaign['nom']} ({campaign['status']})"):
+                   st.write(f"**Public cible:** {', '.join(campaign['public_cible'])}")
+                   st.write(f"**Période:** Du {campaign['debut']} au {campaign['fin']}")
+                   st.write(f"**Description:** {campaign['description']}")
+                   st.write(f"**Créé le:** {campaign['creation_date']}")
 
-    def generate_content(self, content_type, audience, tone, options=None):
-        """Génère du contenu personnalisé selon les paramètres"""
-        templates = {
-            "Post Social Media": {
-                "Citoyens": {
-                    "Formel": """
-                    📢 Information importante pour les Niçois
+   def _show_content_management(self):
+       st.subheader("Gestion du Contenu")
+       
+       content_type = st.selectbox("Type de contenu", ["Post Social Media", "Newsletter", "Communiqué"])
+       
+       col1, col2 = st.columns(2)
+       with col1:
+           title = st.text_input("Titre")
+           content = st.text_area("Contenu", height=150)
+           channels = st.multiselect("Canaux de diffusion", ["Facebook", "Instagram", "Application", "Email"])
+       with col2:
+           tone = st.selectbox("Ton", ["Formel", "Neutre", "Décontracté"])
+           target = st.multiselect("Cible", ["Tous", "Résidents", "Touristes", "Commerçants"])
+           uploaded_file = st.file_uploader("Média")
 
-                    La Ville de Nice renforce son engagement environnemental avec de nouveaux points de collecte dans votre quartier.
+       if st.button("Générer et sauvegarder"):
+           if content:
+               content_data = {
+                   "type": content_type,
+                   "titre": title,
+                   "contenu": content,
+                   "canaux": channels,
+                   "ton": tone,
+                   "cible": target,
+                   "media": uploaded_file.name if uploaded_file else None,
+                   "creation_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+               }
+               self._save_content(content_data)
+               st.success("Contenu sauvegardé avec succès!")
 
-                    ♻️ Objectifs :
-                    • Optimisation du tri sélectif
-                    • Réduction de notre empreinte carbone
-                    • Amélioration du cadre de vie
+       # Afficher les contenus existants
+       st.subheader("Contenus existants")
+       contents = self._load_contents()
+       if contents:
+           for content in contents:
+               with st.expander(f"{content['titre']} ({content['type']})"):
+                   st.write(f"**Canaux:** {', '.join(content['canaux'])}")
+                   st.write(f"**Ton:** {content['ton']}")
+                   st.write(f"**Cible:** {', '.join(content['cible'])}")
+                   st.write(f"**Contenu:**\n{content['contenu']}")
+                   st.write(f"**Créé le:** {content['creation_date']}")
 
-                    📱 Téléchargez notre application pour localiser les points de collecte
-                    🔗 nice.fr/tri-selectif
+   def _show_feedback(self):
+       st.subheader("Retours et Analyses")
+       
+       with st.form("feedback_form"):
+           satisfaction = st.slider("Niveau de satisfaction", 1, 5, 3)
+           feedback_type = st.selectbox("Type de retour", ["Général", "Fonctionnalité", "Bug", "Suggestion"])
+           comments = st.text_area("Commentaires")
+           
+           if st.form_submit_button("Envoyer"):
+               feedback_data = {
+                   "satisfaction": satisfaction,
+                   "type": feedback_type,
+                   "commentaires": comments,
+                   "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+               }
+               self._save_feedback(feedback_data)
+               st.success("Feedback enregistré avec succès!")
 
-                    #NiceDurable #TriSelectif #EnvironnementNice
-                    """,
-                    "Neutre": """
-                    🌿 Le tri sélectif à Nice, c'est simple !
+       # Afficher les retours existants
+       st.subheader("Retours précédents")
+       feedbacks = self._load_feedbacks()
+       if feedbacks:
+           for feedback in feedbacks:
+               with st.expander(f"Retour du {feedback['date']} - {feedback['type']}"):
+                   st.write(f"**Satisfaction:** {feedback['satisfaction']}/5")
+                   st.write(f"**Commentaires:** {feedback['commentaires']}")
 
-                    Découvrez les nouveaux points de collecte près de chez vous.
-                    Une question ? L'application mobile est là pour vous guider.
+   def _save_campaign(self, campaign_data):
+       filename = f"campaign_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+       filepath = os.path.join(self.storage_path, 'campaigns', filename)
+       with open(filepath, 'w', encoding='utf-8') as f:
+           json.dump(campaign_data, f, ensure_ascii=False, indent=4)
 
-                    👉 Téléchargez-la maintenant : nice.fr/app
+   def _save_content(self, content_data):
+       filename = f"content_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+       filepath = os.path.join(self.storage_path, 'content', filename)
+       with open(filepath, 'w', encoding='utf-8') as f:
+           json.dump(content_data, f, ensure_ascii=False, indent=4)
 
-                    #Nice06 #TriSelectif
-                    """,
-                    "Décontracté": """
-                    Hey Nice ! 🌟
+   def _save_feedback(self, feedback_data):
+       filename = f"feedback_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+       filepath = os.path.join(self.storage_path, 'feedback', filename)
+       with open(filepath, 'w', encoding='utf-8') as f:
+           json.dump(feedback_data, f, ensure_ascii=False, indent=4)
 
-                    On continue nos efforts pour une ville + propre ! 
-                    Nouveau : points de collecte intelligents dans ton quartier 🎯
+   def _load_campaigns(self):
+       campaigns = []
+       campaign_dir = os.path.join(self.storage_path, 'campaigns')
+       for filename in os.listdir(campaign_dir):
+           if filename.endswith('.json'):
+               with open(os.path.join(campaign_dir, filename), 'r', encoding='utf-8') as f:
+                   campaigns.append(json.load(f))
+       return sorted(campaigns, key=lambda x: x['creation_date'], reverse=True)
 
-                    📱 Check l'app pour les trouver facilement
-                    💪 Ensemble pour une Nice au top !
+   def _load_contents(self):
+       contents = []
+       content_dir = os.path.join(self.storage_path, 'content')
+       for filename in os.listdir(content_dir):
+           if filename.endswith('.json'):
+               with open(os.path.join(content_dir, filename), 'r', encoding='utf-8') as f:
+                   contents.append(json.load(f))
+       return sorted(contents, key=lambda x: x['creation_date'], reverse=True)
 
-                    #NiceEnAction #TeamTri
-                    """
-                }
-                # Ajoutez d'autres audiences...
-            }
-            # Ajoutez d'autres types de contenu...
-        }
-
-        try:
-            content = templates[content_type][audience][tone]
-            if options and options.get('include_hashtags', True):
-                content += "\n#GestionDéchetsNice #VilleDeNice"
-            return content
-        except KeyError:
-            return self._generate_fallback_content(content_type, audience, tone)
-
-    def _generate_fallback_content(self, content_type, audience, tone):
-        """Génère un contenu par défaut si le template n'existe pas"""
-        current_date = datetime.now().strftime("%d/%m/%Y")
-        return f"""
-        === {content_type} ===
-        Date: {current_date}
-        Public cible: {audience}
-        Ton: {tone}
-
-        [Contenu personnalisé à venir]
-
-        Pour plus d'informations sur la gestion des déchets à Nice :
-        📱 Application mobile
-        🌐 nice.fr/tri
-        📞 0800 XXX XXX
-        """
-
-    def show_analysis(self):
-        st.header("Analyse des Retours")
-        
-        # Données de sentiment
-        sentiment_data = pd.DataFrame({
-            'Sentiment': ['Positif', 'Neutre', 'Négatif'],
-            'Pourcentage': [65, 25, 10]
-        })
-        
-        # Graphique des sentiments
-        fig = px.pie(
-            sentiment_data,
-            values='Pourcentage',
-            names='Sentiment',
-            title='Analyse des Sentiments',
-            color='Sentiment',
-            color_discrete_map={
-                'Positif': '#2ecc71',
-                'Neutre': '#3498db',
-                'Négatif': '#e74c3c'
-            }
-        )
-        st.plotly_chart(fig)
-        
-        # Formulaire de feedback
-        st.subheader("Donnez votre avis")
-        with st.form("feedback_form"):
-            satisfaction = st.slider(
-                "Niveau de satisfaction",
-                1, 5, 3,
-                help="1 = Très insatisfait, 5 = Très satisfait"
-            )
-            feedback = st.text_area(
-                "Vos commentaires",
-                placeholder="Partagez votre expérience..."
-            )
-            submitted = st.form_submit_button("Envoyer")
-            
-            if submitted:
-                sentiment = self.analyze_sentiment(feedback)
-                self.feedback_data.append({
-                    'satisfaction': satisfaction,
-                    'feedback': feedback,
-                    'sentiment': sentiment,
-                    'timestamp': datetime.now()
-                })
-                st.success("Merci pour votre retour !")
-                self._update_analysis()
-
-    def _update_analysis(self):
-        """Met à jour les analyses basées sur les nouveaux feedbacks"""
-        if not self.feedback_data:
-            return
-            
-        # Calcul des moyennes et tendances
-        recent_feedbacks = self.feedback_data[-10:]  # 10 derniers retours
-        avg_satisfaction = sum(f['satisfaction'] for f in recent_feedbacks) / len(recent_feedbacks)
-        sentiment_trend = sum(f['sentiment'] for f in recent_feedbacks) / len(recent_feedbacks)
-        
-        # Mise à jour des KPIs
-        st.session_state['avg_satisfaction'] = avg_satisfaction
-        st.session_state['sentiment_trend'] = sentiment_trend
-
-@staticmethod
-def analyze_sentiment(text):
-    """Analyse le sentiment d'un texte de manière simple"""
-    if not text:
-        return 0
-        
-    # Dictionnaires de mots positifs et négatifs
-    positive_words = [
-        'bon', 'excellent', 'super', 'génial', 'parfait', 'satisfait',
-        'merci', 'bravo', 'propre', 'efficace', 'pratique', 'bien',
-        'amélioration', 'progrès', 'facile', 'utile'
-    ]
-    
-    negative_words = [
-        'mauvais', 'horrible', 'terrible', 'nul', 'pire', 'insatisfait',
-        'sale', 'inefficace', 'difficile', 'problème', 'compliqué',
-        'confusion', 'déçu', 'lent', 'inutile'
-    ]
-    
-    # Analyse simple
-    text = text.lower()
-    words = text.split()
-    
-    # Calcul du score
-    score = 0
-    word_count = len(words)
-    
-    for word in words:
-        if word in positive_words:
-            score += 1
-        elif word in negative_words:
-            score -= 1
-    
-    # Normalisation entre -1 et 1
-    if word_count > 0:
-        return score / word_count
-    return 0
-
-    @staticmethod
-    def generate_image(prompt):
-        """Génère une image basée sur un prompt"""
-        # Placeholder - À remplacer par une vraie API d'IA
-        encoded_prompt = prompt.replace(" ", "+")
-        return f"https://placehold.co/600x400?text={encoded_prompt}"
+   def _load_feedbacks(self):
+       feedbacks = []
+       feedback_dir = os.path.join(self.storage_path, 'feedback')
+       for filename in os.listdir(feedback_dir):
+           if filename.endswith('.json'):
+               with open(os.path.join(feedback_dir, filename), 'r', encoding='utf-8') as f:
+                   feedbacks.append(json.load(f))
+       return sorted(feedbacks, key=lambda x: x['date'], reverse=True)
 
 def main():
-    dashboard = CommunicationDashboard()
-    dashboard.show_communication()
+   dashboard = CommunicationDashboard()
+   dashboard.show_communication()
 
 if __name__ == "__main__":
-    main()
+   main()
