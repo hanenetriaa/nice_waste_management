@@ -1,80 +1,120 @@
-
 COMMUNICATION_EXAMPLES = {
     "Mairie de Nice": {
         "Examples": [
             {
-                "type": "Rapport",
-                "title": "Rapport Trimestriel de Performance",
+                "type": "Rapport Mensuel",
+                "title": "Performance Environnementale - Nice 2024",
                 "content": """
-                • Réduction de 15% des déchets non-triés
-                • Augmentation de 25% du recyclage
-                • Économie de 30% sur les coûts de transport
-                • 85% de satisfaction citoyenne
+                📊 BILAN MENSUEL - GESTION DES DÉCHETS
+
+                RÉSULTATS CLÉS:
+                ✅ Taux de tri : 68% (+15% vs 2023)
+                ✅ Déchets valorisés : 75% (+10%)
+                ✅ Coûts optimisés : -12%
+                
+                INNOVATIONS DÉPLOYÉES:
+                • 50 nouveaux points de collecte intelligents
+                • Application mobile : 15,000 utilisateurs actifs
+                • Système de géolocalisation des véhicules
+                
+                SATISFACTION:
+                👥 Citoyens : 85% (+5%)
+                🚛 Agents de collecte : 78% (+8%)
+                
+                PROCHAINES ÉTAPES:
+                1. Déploiement phase 2 - Vieux Nice
+                2. Formation des ambassadeurs de tri
+                3. Lancement programme écoles
                 """,
-                "image_prompt": "Professional infographic showing waste management statistics, clean modern design with blue and green colors, official city branding"
+                "image_prompt": "clean modern infographic showing waste management statistics in Nice, with Mediterranean color palette, official city logo"
             },
             {
-                "type": "Présentation",
-                "title": "Impact Environnemental",
-                "content": "Analyse détaillée des bénéfices environnementaux et économiques"
+                "type": "Présentation Stratégique",
+                "title": "Stratégie 2024-2025",
+                "content": """
+                OBJECTIFS STRATÉGIQUES:
+                1. Augmentation du taux de tri à 80%
+                2. Réduction des coûts de 20%
+                3. Satisfaction citoyenne > 90%
+
+                MOYENS DÉPLOYÉS:
+                • Budget : 2.5M€
+                • Équipe : +15 agents
+                • Nouveaux équipements : 100 points connectés
+                """,
+                "image_prompt": "professional strategic presentation with graphs showing waste management goals in Nice"
             }
         ]
     },
     "Citoyens de Nice": {
         "Examples": [
             {
-                "type": "Post Instagram",
-                "title": "Ensemble pour une ville plus propre",
+                "type": "Campagne Été",
+                "title": "Nice Propre, Nice Belle",
                 "content": """
-                🌍 Savez-vous qu'un simple geste peut faire la différence ?
-                ♻️ En triant vos déchets, vous contribuez à :
-                🌱 Réduire notre empreinte carbone
-                💚 Préserver notre belle ville
-                📱 Téléchargez notre app pour plus d'astuces !
-                #NiceDurable #TriSelectif
+                ☀️ L'été à Nice, gardons notre ville propre !
+
+                🌊 De la plage à la Promenade :
+                • Points de tri tous les 100m
+                • Collecte renforcée
+                • Application mobile pour localiser les points de collecte
+
+                ♻️ Nouveau : Tri sélectif sur toutes les plages
+                🌱 Objectif : -30% de déchets sur nos plages
+
+                📱 Téléchargez l'app : nice-tri.fr
+                #NiceMaVille #NiceEcologique
                 """,
-                "image_prompt": "Bright and cheerful social media post showing recycling bins in Nice with Mediterranean style architecture in background"
+                "image_prompt": "bright summer scene of Nice beach with modern recycling bins, people recycling, Promenade des Anglais in background"
             },
             {
-                "type": "Flyer",
-                "title": "Guide du Tri",
-                "content": "Guide pratique et visuel pour un tri efficace"
+                "type": "Campagne Carnaval",
+                "title": "Carnaval Responsable",
+                "content": """
+                🎭 Le Carnaval de Nice s'engage pour l'environnement !
+
+                ♻️ Cette année, trions même pendant la fête :
+                • Points de tri spéciaux sur tout le parcours
+                • Équipes de collecte mobilisées
+                • Gobelets réutilisables
+
+                🌍 Ensemble, faisons du Carnaval 2024
+                un événement éco-responsable !
+
+                #CarnavalDeNice #NiceDurable
+                """,
+                "image_prompt": "Nice Carnival celebration with visible recycling points and eco-friendly decorations"
             }
         ]
     },
     "Touristes": {
         "Examples": [
             {
-                "type": "Brochure",
-                "title": "Welcome to Eco-friendly Nice",
+                "type": "Guide Multilingue",
+                "title": "Nice Eco-Friendly Guide",
                 "content": """
-                • Easy-to-follow recycling guidelines
-                • Map of recycling points
-                • Multilingual instructions
-                • Eco-friendly activities in Nice
+                🌞 Welcome to Nice - Une ville engagée
+                Welcome to Nice - An eco-friendly city
+                Benvenuti a Nizza - Una città ecologica
+
+                ♻️ Points de tri / Recycling points / Punti di raccolta:
+                • Vieux-Nice: 15 points
+                • Promenade: 25 points
+                • Zone Piétonne: 20 points
+
+                📱 Scan QR code for our eco-friendly app
+                🗺️ Find nearest recycling point
+                🌍 Join our green initiative
+
+                #VisitNice #GreenTourism
                 """,
-                "image_prompt": "Tourist-friendly recycling guide with iconic Nice landmarks and clear recycling symbols"
-            }
-        ]
-    },
-    "Associations de Quartier": {
-        "Examples": [
-            {
-                "type": "Kit de Communication",
-                "title": "Devenez Ambassadeur du Tri",
-                "content": """
-                • Matériel de sensibilisation
-                • Guides d'animation d'ateliers
-                • Supports de formation
-                • Outils de suivi
-                """,
-                "image_prompt": "Community workshop setting with diverse group of people learning about recycling, warm and engaging atmosphere"
+                "image_prompt": "tourist guide showing Nice landmarks with recycling information, multilingual signs"
             }
         ]
     }
 }
 
-# Statistiques génériques pour les rapports
+# Statistiques pour les rapports
 GENERIC_STATS = {
     "Taux de tri": {
         "current": 65,
@@ -96,7 +136,7 @@ GENERIC_STATS = {
     }
 }
 
-# Messages clés par saison
+# Messages saisonniers
 SEASONAL_MESSAGES = {
     "Été": {
         "theme": "Garder Nice propre pendant la saison touristique",
