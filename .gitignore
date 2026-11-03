@@ -1,4 +1,8 @@
-nltk_data/
 __pycache__/
 *.pyc
 .env
+.venv/
+venv/
+.DS_Store
+# Contenus saisis dans l'application (hors exemples fournis)
+src/data/generated_content/**/user_*.json
