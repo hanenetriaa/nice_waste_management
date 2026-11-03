@@ -1,49 +1,98 @@
-import streamlit as st
+"""Module « Gestion des risques » : matrice de criticité, registre et plan de réponse."""
+
 import pandas as pd
-import plotly.express as px
-from ..data.risks_data import RISKS_DATA
+import plotly.graph_objects as go
+import streamlit as st
+
+from src.data.risks_data import RISKS, criticity_level
+from src.utils.config import CRITICITY_COLORS
+
+LEVEL_SCALE = {"Faible": 0, "Modérée": 1, "Élevée": 2, "Critique": 3}
+
+
+def risks_dataframe() -> pd.DataFrame:
+    df = pd.DataFrame(RISKS)
+    df["criticite"] = df["probabilite"] * df["impact"]
+    df["niveau"] = df["criticite"].map(criticity_level)
+    df["criticite_residuelle"] = df["prob_residuelle"] * df["impact_residuel"]
+    df["niveau_residuel"] = df["criticite_residuelle"].map(criticity_level)
+    return df.sort_values("criticite", ascending=False)
+
+
+def _heatmap(df: pd.DataFrame, prob_col: str, impact_col: str, title: str) -> go.Figure:
+    z, text = [], []
+    for impact in range(1, 6):
+        z_row, t_row = [], []
+        for prob in range(1, 6):
+            z_row.append(LEVEL_SCALE[criticity_level(prob * impact)])
+            ids = df[(df[prob_col] == prob) & (df[impact_col] == impact)]["id"].tolist()
+            t_row.append("<br>".join(" ".join(ids[i:i + 2]) for i in range(0, len(ids), 2)))
+        z.append(z_row)
+        text.append(t_row)
+
+    colors = [CRITICITY_COLORS[k] for k in LEVEL_SCALE]
+    colorscale = [[i / 3, c] for i, c in enumerate(colors)]
+    fig = go.Figure(go.Heatmap(
+        z=z, x=[1, 2, 3, 4, 5], y=[1, 2, 3, 4, 5], text=text, texttemplate="<b>%{text}</b>",
+        textfont=dict(size=13, color="white"), colorscale=colorscale, zmin=0, zmax=3, showscale=False,
+        xgap=3, ygap=3, opacity=0.85,
+        hovertemplate="Probabilité %{x} × Impact %{y}<br>%{text}<extra></extra>",
+    ))
+    fig.update_layout(
+        title=title, height=430, margin=dict(t=50, l=10, r=10, b=10),
+        xaxis=dict(title="Probabilité →", tickvals=[1, 2, 3, 4, 5], ticktext=["1 Rare", "2", "3", "4", "5 Quasi certain"]),
+        yaxis=dict(title="Impact →", tickvals=[1, 2, 3, 4, 5], ticktext=["1 Mineur", "2", "3", "4", "5 Majeur"]),
+    )
+    return fig
+
 
 def show_risk_analysis():
-    st.header("Analyse des Risques")
+    st.header("Gestion des risques")
+    df = risks_dataframe()
 
-    # Conversion des données des risques en DataFrame pour affichage
-    df_risks = pd.DataFrame(RISKS_DATA)
+    c = st.columns(4)
+    c[0].metric("Risques identifiés", len(df))
+    c[1].metric("Critiques (brut)", int((df["niveau"] == "Critique").sum()))
+    c[2].metric("Critiques après plan de réponse", int((df["niveau_residuel"] == "Critique").sum()))
+    reduction = 1 - df["criticite_residuelle"].sum() / df["criticite"].sum()
+    c[3].metric("Réduction de l'exposition", f"{reduction:.0%}", help="Somme des criticités résiduelles vs brutes")
 
-    # Affichage du tableau des risques
-    st.subheader("Tableau des Risques")
-    st.dataframe(df_risks)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.plotly_chart(_heatmap(df, "probabilite", "impact", "Avant plan de réponse"), use_container_width=True)
+    with col2:
+        st.plotly_chart(_heatmap(df, "prob_residuelle", "impact_residuel", "Après plan de réponse (résiduel)"),
+                        use_container_width=True)
+    st.caption(" · ".join(f"<span style='color:{c}'>■</span> {k}" for k, c in CRITICITY_COLORS.items()),
+               unsafe_allow_html=True)
 
-    # Visualisation : matrice des risques
-    st.subheader("Matrice des Risques")
-    fig = px.scatter(
-        df_risks,
-        x="Probabilité",
-        y="Impact",
-        size="Impact",
-        color="Zone_Principale",
-        hover_name="Risque",
-        title="Matrice des Risques",
-        labels={"Probabilité": "Probabilité", "Impact": "Impact"},
-        size_max=30
+    st.subheader("Registre des risques")
+    f1, f2, f3 = st.columns(3)
+    cats = f1.multiselect("Catégorie", sorted(df["categorie"].unique()), placeholder="Toutes")
+    owners = f2.multiselect("Responsable", sorted(df["responsable"].unique()), placeholder="Tous")
+    levels = f3.multiselect("Niveau brut", list(CRITICITY_COLORS), placeholder="Tous")
+    view = df.copy()
+    if cats:
+        view = view[view["categorie"].isin(cats)]
+    if owners:
+        view = view[view["responsable"].isin(owners)]
+    if levels:
+        view = view[view["niveau"].isin(levels)]
+
+    st.dataframe(
+        view[["id", "risque", "categorie", "criticite", "niveau", "strategie", "reponse",
+              "responsable", "criticite_residuelle", "statut", "tendance"]],
+        column_config={
+            "id": "ID", "risque": st.column_config.TextColumn("Risque", width="large"), "categorie": "Catégorie",
+            "criticite": st.column_config.ProgressColumn("Criticité", min_value=0, max_value=25, format="%d"),
+            "niveau": "Niveau", "strategie": "Stratégie", "reponse": st.column_config.TextColumn("Plan de réponse", width="large"),
+            "responsable": "Responsable", "criticite_residuelle": st.column_config.ProgressColumn(
+                "Résiduelle", min_value=0, max_value=25, format="%d"),
+            "statut": "Statut", "tendance": "Tendance",
+        },
+        hide_index=True, use_container_width=True,
     )
-    fig.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
-    st.plotly_chart(fig)
-
-    # Statistiques clés
-    st.subheader("Statistiques Clés")
-    st.write(f"**Nombre total de risques identifiés :** {len(df_risks)}")
-    avg_prob = df_risks['Probabilité'].mean()
-    avg_impact = df_risks['Impact'].mean()
-    st.metric(label="Probabilité Moyenne", value=f"{avg_prob:.2f}")
-    st.metric(label="Impact Moyen", value=f"{avg_impact:.2f}")
-
-    # Détails par zone principale
-    st.subheader("Risques par Zone Principale")
-    zone_selected = st.selectbox("Sélectionnez une zone principale :", df_risks["Zone_Principale"].unique())
-
-    # Filtrer les données par zone sélectionnée
-    filtered_data = df_risks[df_risks["Zone_Principale"] == zone_selected]
-    st.write(f"**Risques dans la zone : {zone_selected}**")
-    st.dataframe(filtered_data)
-
-    st.success("Analyse des risques terminée.")
+    st.caption(
+        "Stratégies de réponse : **Réduire** (diminuer probabilité ou impact) · **Transférer** (contrat, assurance) · "
+        "**Accepter** · **Éviter**. Le registre est revu chaque semaine en comité projet."
+    )

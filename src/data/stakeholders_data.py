@@ -47,11 +47,18 @@ STAKEHOLDERS_DATA = {
         "Évaluation", "Diffusion"
     ],
     "Niveau_Influence": [
-        5, 3, 4, 2, 3,
-        4, 5, 5, 4,
-        3, 4,
+        5, 3, 3, 2, 3,
+        3, 5, 5, 4,
+        3, 3,
         5, 4, 3,
         5, 4
+    ],
+    "Niveau_Intérêt": [
+        3, 3, 4, 2, 3,
+        5, 5, 5, 5,
+        4, 5,
+        4, 3, 2,
+        4, 3
     ],
     "Impact_Projet": [
         "Direct", "Direct", "Direct", "Indirect", "Direct",
@@ -64,7 +71,7 @@ STAKEHOLDERS_DATA = {
 
 # Détails des phases
 PHASES_PROJET = {
-    "Phase 1 - Préparation": {
+    "Phase 1 — Cadrage & préparation (M1-M3)": {
         "Durée": "3 mois",
         "Objectifs": [
             "Analyse des besoins",
@@ -78,10 +85,10 @@ PHASES_PROJET = {
             "Programme de formation"
         ]
     },
-    "Phase 2 - Déploiement": {
+    "Phase 2 — Déploiement pilote (M4-M6)": {
         "Durée": "3 mois",
         "Objectifs": [
-            "Installation équipements",
+            "Équiper 3 quartiers pilotes",
             "Formation terrain",
             "Tests système",
             "Communication"
@@ -92,7 +99,7 @@ PHASES_PROJET = {
             "Plan de communication"
         ]
     },
-    "Phase 3 - Opérationnelle": {
+    "Phase 3 — Généralisation & exploitation (M7-M12)": {
         "Durée": "6 mois",
         "Objectifs": [
             "Exploitation système",
