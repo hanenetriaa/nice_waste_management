@@ -30,8 +30,9 @@ def show_map(df):
                            color="Complexité_Collecte",
                            hover_name="Nom",
                            hover_data=["Population", "Taux_Tri"],
-                           zoom=12,
-                           title="Distribution des Points de Collecte")
+                           zoom=11.5,
+                           height=600,
+                           title="Distribution des points de collecte")
     
     fig.update_layout(mapbox_style="open-street-map")
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)

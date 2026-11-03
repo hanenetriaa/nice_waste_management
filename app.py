@@ -1,72 +1,39 @@
+"""Nice Waste Management — application de pilotage du projet de modernisation de la collecte des déchets."""
+
 import streamlit as st
-from src.components import (
-    dashboard,
-    maps,
-    stakeholders,
-    risks,
-    sources,
-    quartiers
-)
+
+from src.components import dashboard, maps, quartiers, risks, sources, stakeholders
 from src.components.communication import CommunicationDashboard
+from src.components.project_management import show_project_management
 from src.utils.config import APP_CONFIG
 
+PAGES = {
+    "🏠 Synthèse exécutive": dashboard.show_dashboard,
+    "📅 Pilotage de projet": show_project_management,
+    "⚠️ Gestion des risques": risks.show_risk_analysis,
+    "👥 Parties prenantes": stakeholders.show_stakeholders,
+    "🗺️ Diagnostic par quartier": quartiers.show_quartiers,
+    "📍 Cartographie": maps.show_maps,
+    "📣 Communication & changement": lambda: CommunicationDashboard().show_communication(),
+    "📚 Sources & méthodologie": sources.show_sources,
+}
+
+
 def main():
-    st.set_page_config(
-        page_title=APP_CONFIG["title"],
-        page_icon="♻️",
-        layout="wide"
-    )
-    
-    st.title(APP_CONFIG["title"])
+    st.set_page_config(page_title=APP_CONFIG["short_title"], page_icon="♻️", layout="wide")
 
-    # Menu principal
-    main_menu = st.sidebar.selectbox(
-        "Menu Principal",
-        ["Dashboard", "Gestion des Déchets", "Documentation"]
-    )
-
-    if main_menu == "Dashboard":
-        dashboard.show_dashboard()
-        
-    elif main_menu == "Gestion des Déchets":
-        sub_menu = st.sidebar.selectbox(
-            "Gestion des Déchets",
-            ["Études", "Actions"]
+    with st.sidebar:
+        st.markdown(f"## ♻️ {APP_CONFIG['short_title']}")
+        st.caption("Pilotage du projet de modernisation de la collecte des déchets à Nice")
+        page = st.radio("Navigation", list(PAGES), label_visibility="collapsed")
+        st.divider()
+        st.caption(
+            f"Cas d'étude réalisé par **{APP_CONFIG['author']}** · v{APP_CONFIG['version']}  \n"
+            "Données de pilotage simulées — voir *Sources & méthodologie*."
         )
 
-        if sub_menu == "Études":
-            study_menu = st.sidebar.selectbox(
-                "Études",
-                ["Stakeholders", "Analyse des Risques", "Analyse par Quartier", "Cartographie"]
-            )
+    PAGES[page]()
 
-            if study_menu == "Stakeholders":
-                stakeholders.show_stakeholders()
-            elif study_menu == "Analyse des Risques":
-                risks.show_risk_analysis()
-            elif study_menu == "Analyse par Quartier":
-                quartiers.show_quartiers()
-            elif study_menu == "Cartographie":
-                maps.show_maps()
-                
-        elif sub_menu == "Actions":
-            action_menu = st.sidebar.selectbox(
-                "Actions",
-                ["Communication"]
-            )
-
-            if action_menu == "Communication":
-                communication_dashboard = CommunicationDashboard()
-                communication_dashboard.show_communication()
-
-    elif main_menu == "Documentation":
-        doc_menu = st.sidebar.selectbox(
-            "Documentation",
-            ["Sources"]
-        )
-
-        if doc_menu == "Sources":
-            sources.show_sources()
 
 if __name__ == "__main__":
     main()
