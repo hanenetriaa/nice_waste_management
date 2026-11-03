@@ -73,26 +73,30 @@ def show_sources():
             for item in items:
                 st.write(f"- {item}")
 
-    # Contact et support
-    st.subheader("Contact et Support")
-    st.write("""
-    Pour toute question ou demande d'information supplémentaire :
-    - Email: support.dechets@nicecotedazur.org
-    - Téléphone: +33 4 XX XX XX XX
-    - Adresse: XX Avenue XXXX, Nice
-    """)
+    show_methodology()
 
-    # Mentions légales
-    st.subheader("Mentions Légales")
-    st.write("""
-    Les données présentées dans cette application sont soumises aux droits d'auteur 
-    et de propriété intellectuelle de la Métropole Nice Côte d'Azur. 
-    Leur utilisation est autorisée dans le cadre de ce projet conformément aux 
-    licences open data en vigueur.
-    """)
+    st.subheader("Nature des données")
+    st.info(
+        "Ce projet est un **cas d'étude**. Les données démographiques et territoriales s'appuient sur les "
+        "sources publiques ci-dessus (valeurs arrondies). Les données de pilotage (planning, budget, avancement, "
+        "risques, résultats du pilote) sont **simulées** pour illustrer une démarche de gestion de projet et ne "
+        "reflètent pas l'activité réelle de la Métropole Nice Côte d'Azur."
+    )
+
+    st.subheader("Méthodes de gestion de projet utilisées")
+    st.markdown(
+        "- **Charte projet** : objectifs, périmètre inclus / exclu, sponsor, budget\n"
+        "- **WBS et diagramme de Gantt** avec dépendances et jalons\n"
+        "- **Valeur acquise (EVM)** : PV, EV, AC, SPI, CPI, EAC\n"
+        "- **Matrice RACI** avec contrôle d'unicité du « A »\n"
+        "- **Registre des risques** : criticité probabilité × impact, stratégies de réponse, risque résiduel\n"
+        "- **Grille pouvoir / intérêt** des parties prenantes (Mendelow)\n"
+        "- **Gouvernance** : COPIL, comité projet, journal des décisions et plan d'actions"
+    )
+
 
 def show_methodology():
-    st.subheader("Méthodologie de Collecte des Données")
+    st.subheader("Méthodologie de collecte des données")
     methodologie = {
         "Collecte des données": [
             "Recensement exhaustif des points de collecte",
