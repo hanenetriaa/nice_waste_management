@@ -63,7 +63,7 @@ def show_stakeholders():
     fig.update_layout(height=560, xaxis=dict(title="Intérêt pour le projet →", range=[0.5, 5.5], dtick=1),
                       yaxis=dict(title="Influence sur le projet →", range=[0.5, 5.5], dtick=1),
                       legend=dict(orientation="h", y=-0.12), margin=dict(t=20, b=10))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.subheader("Stratégie d'engagement")
     counts = df["Stratégie"].value_counts()
@@ -79,7 +79,7 @@ def show_stakeholders():
     st.dataframe(
         df[["Stakeholder Principal", "Sous-Groupe"] + PHASE_COLUMNS].replace("", "—"),
         column_config={"Stakeholder Principal": "Groupe", "Sous-Groupe": "Sous-groupe"},
-        hide_index=True, use_container_width=True,
+        hide_index=True, width="stretch",
     )
 
     st.subheader("Phases du projet")

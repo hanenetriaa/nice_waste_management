@@ -2,9 +2,9 @@
 
 **Application de pilotage d'un projet de modernisation de la collecte des déchets à Nice**
 
-![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.39-FF4B4B?logo=streamlit&logoColor=white)
-![Plotly](https://img.shields.io/badge/Plotly-5.24-3F4F75?logo=plotly&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.66-FF4B4B?logo=streamlit&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-6-3F4F75?logo=plotly&logoColor=white)
 ![Statut](https://img.shields.io/badge/statut-cas%20d'%C3%A9tude-0F766E)
 
 [![Ouvrir l'application](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://nice-waste-management.streamlit.app)

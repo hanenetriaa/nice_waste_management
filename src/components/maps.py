@@ -35,4 +35,4 @@ def show_map(df):
                            title="Distribution des points de collecte")
     
     fig.update_layout(mapbox_style="open-street-map")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")

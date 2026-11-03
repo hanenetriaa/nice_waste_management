@@ -59,10 +59,10 @@ def show_risk_analysis():
 
     col1, col2 = st.columns(2)
     with col1:
-        st.plotly_chart(_heatmap(df, "probabilite", "impact", "Avant plan de réponse"), use_container_width=True)
+        st.plotly_chart(_heatmap(df, "probabilite", "impact", "Avant plan de réponse"), width="stretch")
     with col2:
         st.plotly_chart(_heatmap(df, "prob_residuelle", "impact_residuel", "Après plan de réponse (résiduel)"),
-                        use_container_width=True)
+                        width="stretch")
     st.caption(" · ".join(f"<span style='color:{c}'>■</span> {k}" for k, c in CRITICITY_COLORS.items()),
                unsafe_allow_html=True)
 
@@ -90,7 +90,7 @@ def show_risk_analysis():
                 "Résiduelle", min_value=0, max_value=25, format="%d"),
             "statut": "Statut", "tendance": "Tendance",
         },
-        hide_index=True, use_container_width=True,
+        hide_index=True, width="stretch",
     )
     st.caption(
         "Stratégies de réponse : **Réduire** (diminuer probabilité ou impact) · **Transférer** (contrat, assurance) · "

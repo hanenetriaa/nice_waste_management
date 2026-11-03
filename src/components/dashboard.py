@@ -72,7 +72,7 @@ def show_dashboard():
     fig.update_layout(height=280, margin=dict(t=10, b=10), xaxis_title="% du chemin parcouru vers la cible",
                       yaxis_title=None)
     fig.update_yaxes(categoryorder="total ascending")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.subheader("Contexte territorial")
     df = pd.DataFrame(QUARTIERS_DATA)
@@ -89,7 +89,7 @@ def show_dashboard():
                       color_discrete_map={"Faible": "#99F6E4", "Moyenne": "#2DD4BF", "Élevée": "#0F766E", "Très élevée": "#134E4A"},
                       labels={"Taux_Tri": "Taux de tri (%)", "Nom": "", "Complexité_Collecte": "Complexité de collecte"})
         fig1.update_layout(height=460, legend=dict(orientation="h", y=-0.15))
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, width="stretch")
     with col2:
         df["Habitants par point"] = (df["Population"] / df["Points_Collecte"]).round(0)
         fig2 = px.scatter(df, x="Population", y="Points_Collecte", size="Volume_Moyen_Mensuel", color="Taux_Tri",
@@ -98,4 +98,4 @@ def show_dashboard():
                           labels={"Points_Collecte": "Points de collecte", "Taux_Tri": "Taux de tri (%)"})
         fig2.update_traces(textposition="top center", textfont_size=10)
         fig2.update_layout(height=460)
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width="stretch")

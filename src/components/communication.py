@@ -52,12 +52,12 @@ class CommunicationDashboard:
 
         st.subheader("Cibles, messages et canaux")
         audiences = pd.DataFrame(get_key_audiences()).T.reset_index().rename(columns={"index": "Cible"})
-        st.dataframe(audiences, hide_index=True, use_container_width=True)
+        st.dataframe(audiences, hide_index=True, width="stretch")
 
         st.subheader("Plan de formation")
-        st.dataframe(pd.DataFrame(get_training_plan()), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(get_training_plan()), hide_index=True, width="stretch")
         st.subheader("Communication de crise")
-        st.dataframe(pd.DataFrame(get_crisis_plan()), hide_index=True, use_container_width=True)
+        st.dataframe(pd.DataFrame(get_crisis_plan()), hide_index=True, width="stretch")
 
         st.subheader("Exemples de messages par cible")
         audience = st.selectbox("Cible", list(COMMUNICATION_EXAMPLES))
@@ -87,7 +87,7 @@ class CommunicationDashboard:
                       title="Engagement par canal (indice)",
                       color_discrete_sequence=[COLORS["secondary"], "#DB2777", COLORS["primary"]])
         fig.update_layout(height=380, legend_title=None, xaxis_title=None)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
         st.caption("L'application citoyenne a été lancée en avril 2025 dans les quartiers pilotes.")
 
     def _show_campaigns(self):
@@ -124,7 +124,7 @@ class CommunicationDashboard:
                               hover_data={"description": True})
             fig.update_yaxes(autorange="reversed", title=None)
             fig.update_layout(title="Calendrier des campagnes", height=300, legend_title=None)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width="stretch")
             for c in campaigns:
                 with st.expander(f"{c['nom']} · {c.get('status', '')}"):
                     st.markdown(f"**Public :** {', '.join(c.get('public_cible', []))}  \n"
@@ -168,7 +168,7 @@ class CommunicationDashboard:
             fig = px.bar(counts, x="count", y="type", orientation="h", color_discrete_sequence=[COLORS["primary"]],
                          labels={"count": "Nombre de retours", "type": ""})
             fig.update_layout(height=220, margin=dict(t=10, b=10))
-            c2.plotly_chart(fig, use_container_width=True)
+            c2.plotly_chart(fig, width="stretch")
 
         with st.form("feedback_form", clear_on_submit=True):
             st.markdown("**Ajouter un retour**")

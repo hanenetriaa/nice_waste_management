@@ -105,7 +105,7 @@ def _show_charter():
     fig.update_yaxes(matches=None, showticklabels=True, title=None)
     fig.update_xaxes(title=None)
     fig.update_layout(height=360, legend_title=None, margin=dict(t=40, b=10))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
     st.info(
         "Les résultats du pilote ont justifié la décision **GO** du COPIL du 27/06/2025 pour la généralisation "
         "aux 12 autres quartiers."
@@ -150,7 +150,7 @@ def _show_planning():
     _add_today_line(fig)
     fig.update_layout(height=640, legend_title=None, margin=dict(l=10, r=10, t=40, b=10),
                       legend=dict(orientation="h", y=-0.06))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.subheader("Jalons")
     ms_view = ms.assign(prevu=ms["prevu"].map(_fmt_date), reel=ms["reel"].map(_fmt_date))
@@ -158,7 +158,7 @@ def _show_planning():
         ms_view[["jalon", "prevu", "reel", "statut", "critere"]],
         column_config={"jalon": "Jalon", "prevu": "Date prévue", "reel": "Date réelle",
                        "statut": "Statut", "critere": "Critère d'atteinte"},
-        hide_index=True, use_container_width=True,
+        hide_index=True, width="stretch",
     )
 
     with st.expander("Détail des tâches (WBS)"):
@@ -170,7 +170,7 @@ def _show_planning():
                 "debut": "Début", "fin": "Fin", "predecesseurs": "Dépend de", "statut": "Statut",
                 "avancement": st.column_config.ProgressColumn("Avancement", format="%d %%", min_value=0, max_value=100),
             },
-            hide_index=True, use_container_width=True,
+            hide_index=True, width="stretch",
         )
 
 
@@ -210,7 +210,7 @@ def _show_budget():
         _add_today_line(fig)
         fig.update_layout(title="Courbe en S du budget (k€ cumulés)", height=420, legend=dict(orientation="h", y=-0.15),
                           margin=dict(t=60, b=10), yaxis_title=None)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
     with col2:
         by_phase = df.groupby("phase", as_index=False)[["budget", "valeur_acquise", "cout_reel"]].sum()
         long = by_phase.melt(id_vars="phase", var_name="mesure", value_name="k€")
@@ -220,7 +220,7 @@ def _show_budget():
         fig2.update_layout(title="Budget par phase", height=420, legend_title=None, yaxis_title=None,
                            legend=dict(orientation="h", y=-0.15), margin=dict(t=60, b=10))
         fig2.update_yaxes(categoryorder="category descending")
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width="stretch")
 
     reserve_left = evm["reserve"] - evm["reserve_consommee"]
     overrun = evm["EAC"] - evm["BAC"]
@@ -240,7 +240,7 @@ def _show_budget():
             view.round(1),
             column_config={"id": "ID", "tache": "Tâche", "budget": "Budget (k€)", "valeur_planifiee": "PV (k€)",
                            "valeur_acquise": "EV (k€)", "cout_reel": "AC (k€)", "ecart_cout": "Écart EV − AC (k€)"},
-            hide_index=True, use_container_width=True,
+            hide_index=True, width="stretch",
         )
 
 
@@ -261,7 +261,7 @@ def _show_organisation():
     raci = pd.DataFrame(RACI, index=RACI_ROLES).T
     raci.index.name = "Activité"
     styler = raci.style.map(_style_raci).set_properties(**{"text-align": "center"})
-    st.dataframe(styler, use_container_width=True, height=(len(raci) + 1) * 36 + 3)
+    st.dataframe(styler, width="stretch", height=(len(raci) + 1) * 36 + 3)
 
     a_count = (raci == "A").sum(axis=1)
     if (a_count == 1).all():
@@ -274,13 +274,13 @@ def _show_organisation():
                  color_discrete_sequence=[COLORS["primary"]])
     fig.update_layout(title="Charge de responsabilité par acteur", showlegend=False, height=300,
                       margin=dict(t=50, b=10), yaxis_title=None)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
     st.subheader("Gouvernance")
     st.dataframe(
         pd.DataFrame(GOVERNANCE),
         column_config={"instance": "Instance", "frequence": "Fréquence", "participants": "Participants", "role": "Rôle"},
-        hide_index=True, use_container_width=True,
+        hide_index=True, width="stretch",
     )
 
 
@@ -296,7 +296,7 @@ def _show_decisions():
     st.dataframe(
         actions.assign(echeance=actions["echeance"].map(_fmt_date)),
         column_config={"id": "ID", "action": "Action", "porteur": "Porteur", "echeance": "Échéance", "statut": "Statut"},
-        hide_index=True, use_container_width=True,
+        hide_index=True, width="stretch",
     )
 
     st.subheader("Journal des décisions")
