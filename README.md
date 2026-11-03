@@ -7,6 +7,10 @@
 ![Plotly](https://img.shields.io/badge/Plotly-5.24-3F4F75?logo=plotly&logoColor=white)
 ![Statut](https://img.shields.io/badge/statut-cas%20d'%C3%A9tude-0F766E)
 
+[![Ouvrir l'application](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://nice-waste-management.streamlit.app)
+
+👉 **Démo en ligne : [nice-waste-management.streamlit.app](https://nice-waste-management.streamlit.app)**
+
 Ce projet est un **cas d'étude en gestion de projet**. J'y conduis, de bout en bout, un projet public
 fictif mais réaliste : équiper les 15 quartiers de Nice de conteneurs connectés, optimiser les tournées
 de collecte et lancer une application citoyenne, en 12 mois et avec un budget de 2,5 M€.
