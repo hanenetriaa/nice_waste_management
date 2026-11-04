@@ -1,4 +1,4 @@
-# ♻️ Nice Waste Management
+# Nice Waste Management
 
 **Application de pilotage d'un projet de modernisation de la collecte des déchets à Nice**
 
@@ -9,7 +9,7 @@
 
 [![Ouvrir l'application](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://nice-waste-management.streamlit.app)
 
-👉 **Démo en ligne : [nice-waste-management.streamlit.app](https://nice-waste-management.streamlit.app)**
+**Démo en ligne : [nice-waste-management.streamlit.app](https://nice-waste-management.streamlit.app)**
 
 Ce projet est un **cas d'étude en gestion de projet**. J'y conduis, de bout en bout, un projet public
 fictif mais réaliste : équiper les 15 quartiers de Nice de conteneurs connectés, optimiser les tournées
@@ -22,17 +22,17 @@ le planning, le budget, les risques, les parties prenantes, la gouvernance et la
 
 ---
 
-## 🎯 Le projet en bref
+## Le projet en bref
 
 | | |
 |---|---|
 | **Problème** | Conteneurs qui débordent (18 %), taux de tri moyen de 65 %, tournées planifiées à l'aveugle, quartiers aux contraintes très différentes (centre historique, quartiers sensibles, collines, zones touristiques) |
 | **Objectifs (fin 2025)** | Taux de tri : 70 % · conteneurs qui débordent : < 8 % · kilomètres parcourus par les camions : –15 % · satisfaction des habitants : 80 % · 20 000 utilisateurs de l'application |
 | **Solution** | Capteurs de remplissage, algorithme d'optimisation des tournées, application citoyenne FR/EN/IT, formation des agents, campagnes de sensibilisation |
-| **Approche** | Pilote sur 3 quartiers représentatifs → décision Go / No-Go → généralisation aux 12 autres quartiers |
+| **Approche** | Pilote sur 3 quartiers représentatifs, puis décision Go / No-Go, puis généralisation aux 12 autres quartiers |
 | **Cadre** | 12 mois · 19 tâches · 9 jalons · 7 acteurs · budget de 2 480 k€ + 120 k€ de réserve pour aléas |
 
-## 🧭 Compétences de chef de projet démontrées
+## Ce que le projet met en pratique
 
 | Compétence | Mise en œuvre dans l'application |
 |---|---|
@@ -46,7 +46,7 @@ le planning, le budget, les risques, les parties prenantes, la gouvernance et la
 | **Conduite du changement** | Plan de communication par cible, plan de formation, communication de crise, suivi des campagnes et des retours usagers |
 | **Prise de décision fondée sur les données** | Résultats du pilote avant / après, qui justifient la décision de généralisation |
 
-## 🖼️ Aperçu
+## Aperçu
 
 <table>
 <tr>
@@ -63,15 +63,15 @@ le planning, le budget, les risques, les parties prenantes, la gouvernance et la
 </tr>
 </table>
 
-## 📖 L'histoire du projet (situation au 11/07/2025)
+## L'histoire du projet (situation au 11/07/2025)
 
-1. **Cadrage (janv. → mars).** Diagnostic des 15 quartiers, cartographie des parties prenantes et appel d'offres pour les capteurs. Le marché est attribué avec une semaine de retard, absorbée par la marge du planning.
-2. **Pilote (avril → juin).** 3 quartiers représentatifs : Vieux-Nice (touristique), L'Ariane (quartier sensible) et Cimiez (résidentiel). Le taux de tri gagne +3 à +6 points, les débordements sont divisés par 2 et les kilomètres parcourus baissent de 9 à 13 %. Le COPIL décide **GO** pour la généralisation.
+1. **Cadrage (janvier à mars).** Diagnostic des 15 quartiers, cartographie des parties prenantes et appel d'offres pour les capteurs. Le marché est attribué avec une semaine de retard, absorbée par la marge du planning.
+2. **Pilote (avril à juin).** 3 quartiers représentatifs : Vieux-Nice (touristique), L'Ariane (quartier sensible) et Cimiez (résidentiel). Le taux de tri gagne +3 à +6 points, les débordements sont divisés par 2 et les kilomètres parcourus baissent de 9 à 13 %. Le COPIL décide **GO** pour la généralisation.
 3. **Généralisation (en cours).** La pose des capteurs en zone dense prend du retard (SPI 0,95, CPI 0,93). Le chef de projet propose un plan de rattrapage, que le COPIL valide : 2 équipes de pose supplémentaires (+45 k€ pris sur la réserve). Un dossier d'arbitrage budgétaire est en préparation.
 
 La page *Synthèse exécutive* résume cette situation en un écran, pour un élu ou un sponsor.
 
-## 🗂️ Structure du code
+## Structure du code
 
 ```
 nice_waste_management/
@@ -97,7 +97,7 @@ Les indicateurs ne sont pas saisis à la main : ils sont **calculés** à partir
 de budget. Par exemple, le statut « En retard » d'une tâche, le SPI, le CPI et la météo projet se mettent
 à jour automatiquement quand on modifie l'avancement d'une tâche dans `src/data/project_data.py`.
 
-## 🚀 Lancer l'application
+## Lancer l'application
 
 ```bash
 git clone https://github.com/hanenetriaa/nice_waste_management.git
@@ -111,12 +111,12 @@ L'application s'ouvre sur http://localhost:8501.
 
 **Mise en ligne gratuite :** sur [Streamlit Community Cloud](https://streamlit.io/cloud), choisir « New app », sélectionner ce dépôt et `app.py`. Un `Procfile` est aussi fourni pour un déploiement de type Heroku ou Render.
 
-## ⚠️ À propos des données
+## À propos des données
 
 - Les **données territoriales** (population, quartiers) s'appuient sur des sources publiques (INSEE, Métropole Nice Côte d'Azur, ADEME). Les valeurs sont arrondies.
 - Les **données de pilotage** (planning, budget, avancement, risques, résultats du pilote) sont **simulées** pour illustrer la démarche. Elles ne reflètent pas l'activité réelle de la Métropole Nice Côte d'Azur.
 
-## 👩‍💼 Auteure
+## Auteure
 
 **Hanene Triaa** · [GitHub](https://github.com/hanenetriaa)
 
